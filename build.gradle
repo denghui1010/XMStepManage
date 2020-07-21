@@ -3,11 +3,21 @@
 buildscript {
     
     repositories {
-        google()
-        jcenter()
+        maven {
+            //阿里的google仓库镜像, 速度远远快于原始库, 但如果出现一些找不到依赖库的特殊情况, 请换回原始仓库
+            url "https://maven.aliyun.com/repository/google"
+        }
+        maven {
+            //阿里的google仓库镜像, 速度远远快于原始库, 但如果出现一些找不到依赖库的特殊情况, 请换回原始仓库
+            url "https://maven.aliyun.com/repository/gradle-plugin"
+        }
+        jcenter() {
+            //阿里的jcenter仓库镜像, 速度远远快于原始库, 但如果出现一些找不到依赖库的特殊情况, 请换回原始仓库
+            url "https://maven.aliyun.com/repository/jcenter"
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,8 +27,14 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-        jcenter()
+        maven {
+            //阿里的google仓库镜像, 速度远远快于原始库, 但如果出现一些找不到依赖库的特殊情况, 请换回原始仓库
+            url "https://maven.aliyun.com/repository/google"
+        }
+        jcenter() {
+            //阿里的jcenter仓库镜像, 速度远远快于原始库, 但如果出现一些找不到依赖库的特殊情况, 请换回原始仓库
+            url "https://maven.aliyun.com/repository/jcenter"
+        }
     }
 }
 

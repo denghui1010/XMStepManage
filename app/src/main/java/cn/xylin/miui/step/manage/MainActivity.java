@@ -3,6 +3,7 @@ package cn.xylin.miui.step.manage;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,12 +16,15 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+
 import cn.xylin.miui.step.manage.util.Final;
 import cn.xylin.miui.step.manage.util.RootTool;
 import cn.xylin.miui.step.manage.util.Shared;
@@ -35,7 +39,7 @@ public class MainActivity extends Activity {
     private EditText edtAddSteps;
     private int todayStepCount;
     private long clickTime = 0L;
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
     private Shared shared;
     private AlertDialog.Builder dialogAppTip;
     private int currentWorkMode;
@@ -77,6 +81,11 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getTodayStep();
     }
 
@@ -254,5 +263,9 @@ public class MainActivity extends Activity {
                 return Final.BOOL_NULL;
             }
         }
+    }
+
+    public void checkSteps(View view) {
+        startActivity(new Intent(this, RecordActivity.class));
     }
 }

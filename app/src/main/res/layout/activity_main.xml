@@ -57,11 +57,21 @@
             android:onClick="startStepAdd"
             android:text="@string/btn_add_step" />
 
+        <Button
+            android:id="@+id/btnCheckSteps"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fifty_dp"
+            android:layout_below="@id/btnAddSteps"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:onClick="checkSteps"
+            android:text="@string/btn_check_step" />
+
         <TextView
             android:id="@+id/tvAppUseTip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/btnAddSteps"
+            android:layout_below="@id/btnCheckSteps"
             android:layout_marginTop="@dimen/ten_dp"
             android:text="@string/use_app_tip"
             android:textSize="@dimen/text_size" />

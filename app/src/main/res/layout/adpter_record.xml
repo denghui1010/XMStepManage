@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/column_id"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        tools:text="999" />
+
+    <TextView
+        android:id="@+id/column_mode"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        tools:text="2" />
+
+    <TextView
+        android:id="@+id/column_steps"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        tools:text="99999" />
+
+    <TextView
+        android:id="@+id/column_begin_time"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/column_end_time"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+</LinearLayout>

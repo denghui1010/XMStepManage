@@ -55,6 +55,7 @@
         系统洗白：将程序转换为系统应用以获取写入步数权限，转换时需要ROOT权限，增加步数时不需要
     </string>
     <string name="text_new_day_auto_add_step">每天第一次打开时自动修改</string>
+    <string name="btn_check_step">查看步数记录</string>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="fifty_dp">50dp</dimen>
     <dimen name="text_size">16sp</dimen>
