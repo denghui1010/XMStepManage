@@ -4,10 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +25,7 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +41,13 @@ public class RecordActivity extends Activity {
     private RecordAdapter recordAdapter;
     private int todayStepCount;
     private TextView todaySteps;
+    private SensorManager sensorManager;
+    private int mStepDetector = 0;  // 自应用运行以来STEP_DETECTOR检测到的步数
+    private int mStepCounter = 0;   // 自系统开机以来STEP_COUNTER检测到的步数
+    private MySensorEventListener mySensorEventListener;
+    private TextView sensorSteps;
+    private TextView recordSteps;
+    private TextView titleId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +55,9 @@ public class RecordActivity extends Activity {
         setContentView(R.layout.activity_record);
 
         todaySteps = findViewById(R.id.today_steps);
+        sensorSteps = findViewById(R.id.sensor_steps);
+        recordSteps = findViewById(R.id.record_steps);
+        titleId = findViewById(R.id.title_id);
 
         ListView recordListView = findViewById(R.id.recordListView);
         recordAdapter = new RecordAdapter();
@@ -78,6 +95,24 @@ public class RecordActivity extends Activity {
                 recordAdapter.notifyDataSetChanged();
             }
         });
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mySensorEventListener = new MySensorEventListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean b = sensorManager.registerListener(mySensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR),
+                SensorManager.SENSOR_DELAY_FASTEST);
+        boolean b1 = sensorManager.registerListener(mySensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER),
+                SensorManager.SENSOR_DELAY_FASTEST);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(mySensorEventListener);
     }
 
     public void delete(View view) {
@@ -160,7 +195,8 @@ public class RecordActivity extends Activity {
                         @SuppressLint("SetTextI18n")
                         @Override
                         public void run() {
-                            todaySteps.setText("今日步数: " + todayStepCount + " ,记录数: " + list.size());
+                            todaySteps.setText("今日步数: " + todayStepCount);
+                            titleId.setText("ID " + list.size());
                             recordAdapter.notifyDataSetChanged();
                         }
                     });
@@ -225,6 +261,30 @@ public class RecordActivity extends Activity {
                 mode = view.findViewById(R.id.column_mode);
                 steps = view.findViewById(R.id.column_steps);
             }
+        }
+    }
+
+
+    class MySensorEventListener implements SensorEventListener {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            System.out.println("@@@:" + event.sensor.getType() + "--" + Sensor.TYPE_STEP_DETECTOR + "--" + Sensor.TYPE_STEP_COUNTER);
+            if (event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+                if (event.values[0] == 1.0f) {
+                    mStepDetector++;
+                }
+            } else if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                mStepCounter = (int) event.values[0];
+                Log.i("RecordActivity", Arrays.toString(event.values));
+            }
+
+            recordSteps.setText("软件: " + mStepDetector);
+            sensorSteps.setText("传感器: " + mStepCounter);
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     }
 

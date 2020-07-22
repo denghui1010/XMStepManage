@@ -16,14 +16,28 @@
             android:id="@+id/today_steps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="今日步数: 0" />
+            android:text="小米:0" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="15dp"
             android:onClick="delete"
-            android:text="删除已标记" />
+            android:text="删除" />
+
+        <TextView
+            android:id="@+id/record_steps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="软件:0" />
+
+        <TextView
+            android:id="@+id/sensor_steps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="传感器:0" />
 
     </LinearLayout>
 
@@ -33,11 +47,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="40dp"
+            android:id="@+id/title_id"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:text="ID" />
 
         <TextView
+            android:visibility="gone"
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:text="MODE" />

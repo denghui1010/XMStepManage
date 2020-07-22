@@ -9,11 +9,12 @@
 
     <TextView
         android:id="@+id/column_id"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="match_parent"
         tools:text="999" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/column_mode"
         android:layout_width="60dp"
         android:layout_height="match_parent"

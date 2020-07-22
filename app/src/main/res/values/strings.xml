@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">小米步数管理</string>
+    <string name="app_name">StepManager</string>
     <string name="add_step_error_core">默认模式添加步数失败，请切换模式或核心破解手机后重试</string>
     <string name="add_step_error_root">ROOT模式添加步数失败，请确认授予了程序ROOT权限且/system/xbin/文件夹存在sqlite3文件</string>
     <string name="add_step_error_system">系统洗白模式添加步数失败，请尝试切换工作模式，切换模式之前请通过菜单卸载程序</string>
