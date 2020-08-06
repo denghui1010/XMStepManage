@@ -129,7 +129,7 @@ public class MainActivity extends Activity {
                             //1秒1.5步
                             int steps = (int) (dTime * 1.5);
                             edtAddSteps.setHint("建议最大步数" + steps);
-                            randomAdd(null);
+                            resetRandom(null);
                         }
                     });
                 } catch (Exception ignored) {
@@ -165,7 +165,7 @@ public class MainActivity extends Activity {
     @SuppressLint("SetTextI18n")
     public void randomAdd(View view) {
         if (randomStartTime == 0) {
-            randomStartTime = endTime + (long) (100 * Math.random() * 1000);
+            randomStartTime = endTime + (long) (600 * Math.random() * 1000);
         }
         if (randomEndTime == 0) {
             randomEndTime = randomStartTime;
