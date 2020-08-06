@@ -34,8 +34,8 @@ import cn.xylin.miui.step.manage.util.Final;
 
 public class RecordActivity extends Activity {
     private final String[] QUERY_FILED = {Final.ID, Final.BEGIN_TIME, Final.END_TIME, Final.MODE, Final.STEPS};
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
-    private SimpleDateFormat stepTimeFormat = new SimpleDateFormat("MM/dd HH:mm:ss", Locale.getDefault());
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
+    private SimpleDateFormat stepTimeFormat = new SimpleDateFormat("MM/dd HH:mm:ss", Locale.CHINA);
 
     private List<ContentValues> list = new ArrayList<>();
     private RecordAdapter recordAdapter;

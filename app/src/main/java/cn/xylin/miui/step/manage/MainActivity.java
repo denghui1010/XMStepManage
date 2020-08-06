@@ -1,5 +1,6 @@
 package cn.xylin.miui.step.manage;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import cn.xylin.miui.step.manage.util.Final;
@@ -39,10 +41,18 @@ public class MainActivity extends Activity {
     private EditText edtAddSteps;
     private int todayStepCount;
     private long clickTime = 0L;
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
+    private SimpleDateFormat timeFormat2 = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
+
     private Shared shared;
     private AlertDialog.Builder dialogAppTip;
     private int currentWorkMode;
+    private long endTime;
+    private long randomStartTime;
+    private long randomEndTime;
+    private TextView randomSteps;
+    private TextView randomStepsTime;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +60,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         tvTodaySteps = findViewById(R.id.tvTodaySteps);
         edtAddSteps = findViewById(R.id.edtAddSteps);
+        randomSteps = findViewById(R.id.randomSteps);
+        randomStepsTime = findViewById(R.id.randomStepsTime);
         Switch swhAutoAddSteps = findViewById(R.id.swhAutoAddSteps);
         dialogAppTip = new AlertDialog.Builder(this)
                 .setNegativeButton(R.string.btn_ok, null);
@@ -97,11 +109,14 @@ public class MainActivity extends Activity {
                     Cursor cursor = getContentResolver().query(Final.STEP_URI, QUERY_FILED, null, null, null);
                     long todayBeginTime = timeFormat.parse(getTodayTime(true)).getTime();
                     long todayEndTime = timeFormat.parse(getTodayTime(false)).getTime();
+                    todayStepCount = 0;
+                    endTime = 0;
                     if (cursor != null) {
-                        todayStepCount = 0;
                         while (cursor.moveToNext()) {
                             if (cursor.getLong(1) > todayBeginTime && cursor.getLong(2) < todayEndTime && cursor.getInt(3) == 2) {
                                 todayStepCount += cursor.getInt(4);
+                                int endTimeIndex = cursor.getColumnIndex(Final.END_TIME);
+                                endTime = cursor.getLong(endTimeIndex);
                             }
                         }
                         cursor.close();
@@ -109,7 +124,12 @@ public class MainActivity extends Activity {
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvTodaySteps.setText(String.format("今日步数：%d", todayStepCount));
+                            tvTodaySteps.setText(String.format(Locale.CHINA, "今日步数：%d, 时间:%s", todayStepCount, timeFormat.format(new Date(endTime))));
+                            long dTime = (System.currentTimeMillis() - endTime) / 1000;
+                            //1秒1.5步
+                            int steps = (int) (dTime * 1.5);
+                            edtAddSteps.setHint("建议最大步数" + steps);
+                            randomAdd(null);
                         }
                     });
                 } catch (Exception ignored) {
@@ -122,16 +142,55 @@ public class MainActivity extends Activity {
         return String.format("%s%s", timeFormat.format(System.currentTimeMillis()).substring(0, 11), flag ? "00:00:00" : "23:59:59");
     }
 
-    private ContentValues getAddStepValues() throws NumberFormatException {
-        ContentValues values = new ContentValues();
-        values.put(Final.BEGIN_TIME, (System.currentTimeMillis() - 600000L));
-        values.put(Final.END_TIME, System.currentTimeMillis());
-        values.put(Final.MODE, 2);
-        values.put(Final.STEPS, Integer.parseInt(edtAddSteps.getText().toString()));
-        return values;
+    private ContentValues getAddStepValues(int type) throws NumberFormatException {
+        if (type == 0) {
+            int steps = Integer.parseInt(edtAddSteps.getText().toString());
+            long second = (long) (steps / 1.5);
+            ContentValues values = new ContentValues();
+            values.put(Final.BEGIN_TIME, (System.currentTimeMillis() - second * 1000));
+            values.put(Final.END_TIME, System.currentTimeMillis());
+            values.put(Final.MODE, 2);
+            values.put(Final.STEPS, steps);
+            return values;
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(Final.BEGIN_TIME, randomStartTime);
+            values.put(Final.END_TIME, randomEndTime);
+            values.put(Final.MODE, 2);
+            values.put(Final.STEPS, randomSteps.getText().toString());
+            return values;
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void randomAdd(View view) {
+        if (randomStartTime == 0) {
+            randomStartTime = endTime + (long) (100 * Math.random() * 1000);
+        }
+        if (randomEndTime == 0) {
+            randomEndTime = randomStartTime;
+        }
+        // 每调用一次都会增加一次
+        randomEndTime = randomEndTime + (long) (1000 * Math.random() * 1000);
+        if (randomStartTime > System.currentTimeMillis()) {
+            randomStartTime = System.currentTimeMillis();
+        }
+        if (randomEndTime > System.currentTimeMillis()) {
+            randomEndTime = System.currentTimeMillis();
+        }
+        int steps = (int) ((randomEndTime - randomStartTime) / 1000 * 1.5);
+        randomSteps.setText(steps + "");
+        randomStepsTime.setText(timeFormat2.format(new Date(randomStartTime)) + "~" + timeFormat2.format(new Date(randomEndTime)));
+    }
+
+    public void resetRandom(View view) {
+        randomStartTime = 0;
+        randomEndTime = 0;
+        randomAdd(null);
     }
 
     public void startStepAdd(View view) {
+        int type = Integer.parseInt((String) view.getTag());
         try {
             switch (currentWorkMode) {
                 case Final.WORK_MODE_CORE:
@@ -148,7 +207,7 @@ public class MainActivity extends Activity {
                             return;
                         }
                     }
-                    getContentResolver().insert(Final.STEP_URI, getAddStepValues());
+                    getContentResolver().insert(Final.STEP_URI, getAddStepValues(type));
                     break;
                 }
                 case Final.WORK_MODE_ROOT: {
@@ -164,7 +223,7 @@ public class MainActivity extends Activity {
                         RootTool.copySqliteFileToSystem(this);
                         shared.getEdit().putBoolean(Shared.KEY_UNZIP_SQLITE_FILE, true).editApply();
                     }
-                    RootTool.addStepsByRootMode(getAddStepValues());
+                    RootTool.addStepsByRootMode(getAddStepValues(type));
                     break;
                 }
                 default: {
